@@ -1,9 +1,11 @@
-#![deny(clippy::all)]
+use neon::prelude::*;
 
-#[macro_use]
-extern crate napi_derive;
+fn hello(mut cx: FunctionContext) -> JsResult<JsString> {
+    Ok(cx.string("hello node"))
+}
 
-#[napi]
-pub fn sum(a: i32, b: i32) -> i32 {
-  a + b
+#[neon::main]
+fn main(mut cx: ModuleContext) -> NeonResult<()> {
+    cx.export_function("hello", hello)?;
+    Ok(())
 }
