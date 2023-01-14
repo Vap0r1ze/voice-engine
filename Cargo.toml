@@ -1,7 +1,8 @@
 [package]
 name = "voice-engine"
 version = "0.1.0"
-license = "ISC"
+license = "MIT"
+authors = ["Justice Almanzar <superdash993@gmail.com>"]
 edition = "2018"
 exclude = ["index.node"]
 
