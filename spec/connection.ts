@@ -89,8 +89,7 @@ export type VoiceConnection = {
   /** Will be called with true on stream connections */
   setSelfMute(muted: boolean): void
   setSelfPan(left: number, right: number): void
-  // TODO: Check `isPriority`
-  setPTTActive(pushed: boolean, isPriority: boolean): void
+  setPTTActive(active: boolean, isPriority: boolean): void
 
   /** @param volume volume multiplier */
   setLocalVolume(userId: string, volume: number): void
