@@ -1,5 +1,7 @@
 target
+dist/
 index.node
+.turbo
 **/node_modules
 **/.DS_Store
 npm-debug.log*

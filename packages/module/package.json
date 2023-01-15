@@ -1,0 +1,17 @@
+{
+  "name": "voice-engine",
+  "version": "0.1.0",
+  "description": "",
+  "author": "Vap0r1ze",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "esbuild ./src/index.ts --outdir=dist"
+  },
+  "dependencies": {
+    "voice-engine-native": "*"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.0"
+  }
+}
