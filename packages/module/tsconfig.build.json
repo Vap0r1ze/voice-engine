@@ -6,7 +6,6 @@
         "rootDir": "src",
         "declaration": true,
 
-        "target": "ES2020",
         "module": "CommonJS"
     }
 }

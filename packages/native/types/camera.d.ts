@@ -29,7 +29,9 @@ export type MediaFilter =
           graph: MediaFilterType.BackgroundReplacement;
           target: MediaFilterTarget;
           /** Used for bitmap backgrounds */
-          image: ImgData;
+          image: ImgData & {
+              pixelFormat: 'rgba'; // NOTE: There may be more pixel formats
+          };
       }
     | {
           graph: MediaFilterType.BackgroundReplacement;

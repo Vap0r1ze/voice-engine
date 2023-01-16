@@ -1,15 +1,8 @@
-use neon::prelude::*;
+#![deny(clippy::all)]
 
-fn add(mut ctx: FunctionContext) -> JsResult<JsNumber> {
-    let a_var: Handle<JsNumber> = ctx.argument(0)?;
-    let b_var: Handle<JsNumber> = ctx.argument(0)?;
-    let a = a_var.value(&mut ctx);
-    let b = b_var.value(&mut ctx);
-    Ok(ctx.number(a + b))
-}
+use napi_derive::napi;
 
-#[neon::main]
-fn main(mut cx: ModuleContext) -> NeonResult<()> {
-    cx.export_function("add", add)?;
-    Ok(())
+#[napi]
+pub fn plus_100(input: u32) -> u32 {
+    input + 100
 }

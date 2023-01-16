@@ -1,3 +1,35 @@
+export const enum FeatureFlag {
+    VoicePanning = 'voice_panning',
+    VoiceMultipleConnections = 'voice_multiple_connections',
+    MediaDevices = 'media_devices',
+    MediaVideo = 'media_video',
+    DebugLogging = 'debug_logging',
+    SetAudioDeviceById = 'set_audio_device_by_id',
+    SetVideoDeviceById = 'set_video_device_by_id',
+    Loopback = 'loopback',
+    ExperimentConfig = 'experiment_config',
+    RemoteLocusNetworkControl = 'remote_locus_network_control',
+    ConnectionReplay = 'connection_replay',
+    Simulcast = 'simulcast',
+    SimulcastBugfix = 'simulcast_bugfix',
+    DirectVideo = 'direct_video',
+    ElectronVideo = 'electron_video',
+    FixedKeyframeInterval = 'fixed_keyframe_interval',
+    Soundshare = 'soundshare',
+    Mediapipe = 'mediapipe',
+    MediapipeAnimated = 'mediapipe_animated',
+    VoiceLegacySubsystem = 'voice_legacy_subsystem',
+    HybridVideo = 'hybrid_video',
+    ElevatedHook = 'elevated_hook',
+    SoundshareLoopback = 'soundshare_loopback',
+    ScreenPreviews = 'screen_previews',
+    WindowPreviews = 'window_previews',
+    AudioDebugState = 'audio_debug_state',
+    VideoEffects = 'video_effects',
+    VoiceExperimentalSubsystem = 'voice_experimental_subsystem',
+    ExperimentalEncoders = 'experimental_encoders',
+}
+
 export interface Manager {
-    features: null; // TODO
+    features: { declare(flag: FeatureFlag): void };
 }

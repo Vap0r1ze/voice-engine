@@ -1,5 +1,5 @@
 {
-    "name": "voice-engine-native",
+    "name": "@boisu/core",
     "version": "0.1.0",
     "description": "",
     "author": "Vap0r1ze",
@@ -11,12 +11,34 @@
         "types"
     ],
     "scripts": {
-        "build": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
-        "build-debug": "npm run build --",
-        "build-release": "npm run build -- --release",
+        "build": "napi build --platform --release",
+        "prepare": "node scripts/prepare-platforms.js",
         "test": "cargo test"
     },
+    "napi": {
+        "name": "dist/core",
+        "triples": {
+            "defaults": false,
+            "additional": [
+                "i686-pc-windows-msvc",
+                "aarch64-pc-windows-msvc",
+                "armv7-unknown-linux-gnueabihf",
+                "aarch64-unknown-linux-gnu",
+                "aarch64-unknown-linux-musl",
+                "x86_64-unknown-linux-musl",
+                "x86_64-unknown-linux-gnu",
+                "aarch64-apple-darwin",
+                "x86_64-apple-darwin",
+                "x86_64-unknown-freebsd"
+            ]
+        }
+    },
     "devDependencies": {
-        "cargo-cp-artifact": "^0.1"
+        "@napi-rs/cli": "^2.13.2",
+        "@napi-rs/triples": "^1.1.0"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
     }
 }

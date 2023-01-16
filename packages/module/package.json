@@ -1,5 +1,5 @@
 {
-    "name": "voice-engine",
+    "name": "@boisu/engine",
     "version": "0.1.0",
     "description": "",
     "author": "Vap0r1ze",
@@ -10,7 +10,7 @@
         "build": "tsc --project tsconfig.build.json"
     },
     "dependencies": {
-        "voice-engine-native": "*"
+        "@boisu/core": "*"
     },
     "devDependencies": {
         "@types/node": "16",

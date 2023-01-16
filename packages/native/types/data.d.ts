@@ -1,8 +1,8 @@
+export type FrameCallback = (imgData: ImgData) => void;
 export type ImgData = {
     width: number;
     height: number;
     data: Uint8ClampedArray;
-    pixelFormat: 'rgba'; // NOTE: There may be more pixel formats
 };
 
 export type Json<T> = string & { ['\u2728']: T };
