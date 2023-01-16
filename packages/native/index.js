@@ -1,1 +1,1 @@
-exports.VoiceEngine = require(".")
+exports.VoiceEngine = require("./index.node")

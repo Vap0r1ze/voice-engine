@@ -4,7 +4,7 @@
   "description": "",
   "author": "Vap0r1ze",
   "license": "MIT",
-  "main": "index.node",
+  "main": "index.js",
   "types": "types/index.d.ts",
   "files": [
     "index.js",
