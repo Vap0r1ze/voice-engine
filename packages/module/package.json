@@ -5,6 +5,7 @@
   "author": "Vap0r1ze",
   "license": "MIT",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "esbuild ./src/index.ts --outdir=dist --format=cjs"
   },
@@ -12,6 +13,7 @@
     "voice-engine-native": "*"
   },
   "devDependencies": {
-    "esbuild": "^0.17.0"
+    "@types/node": "16",
+    "typescript": "^4.9.4"
   }
 }

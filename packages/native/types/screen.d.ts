@@ -43,7 +43,7 @@ export type DesktopSourceStatus =
   | VideoStateUpdate
   | ScreenshareFinish
 
-enum SoundshareState {
+export const enum SoundshareState {
   Idle = 0,
 }
 type SoundshareAttachRequested = {
@@ -58,7 +58,7 @@ type SoundshareStateTransition = {
 type SoundshareAudioDetected = { type: 'soundshare_audio_detected' }
 type VideoHookStart = { type: 'videohook_start' }
 type VideoHookStop = { type: 'videohook_stop' }
-enum VideoState {
+export const enum VideoState {
   Playing = 'playing',
 }
 type VideoStateUpdate = {

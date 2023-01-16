@@ -1,3 +1,7 @@
 {
-  "include": ["src/**/*.ts"]
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "lib": [ "ES2020" ]
+  },
+  "include": [ "src/**/*.ts" ]
 }
