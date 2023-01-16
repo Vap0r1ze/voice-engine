@@ -1,6 +1,10 @@
-### Non Critical
+### Critical
 
+VoiceEngine::VoiceConnection
 VoiceEngine::initialize
+
+### Non Critical?
+
 VoiceEngine::setImageDataAllocator
 VoiceEngine::getSupportedVideoCodecs
 VoiceEngine::setExperimentalAdm
@@ -10,16 +14,12 @@ VoiceEngine::rankRtcRegions
 VoiceEngine::getSoundshareStatus
 VoiceEngine::enableSoundshare
 VoiceEngine::setMaxSyncDelayOverride
-VoiceEngine::VoiceConnection
 VoiceEngine::VoiceReplayConnection
 VoiceEngine::createTransport
 VoiceEngine::createReplayConnection
 VoiceEngine::addVideoOutputSink
 VoiceEngine::removeVideoOutputSink
 Connection::setTransportOptions
-Connection::setLocalVolume
-Connection::setLocalMute
-Connection::setLocalPan
 Connection::setDisableLocalVideo
 Connection::setMinimumOutputDelay
 Connection::configureConnectionRetries
@@ -27,7 +27,6 @@ Connection::setPingTimeoutCallback
 Connection::setRemoteUserSpeakingStatus
 Connection::setRemoteUserCanHavePriority
 Connection::setDesktopSource
-Connection::getStats
 Connection::startReplay
 Connection::startSamplesPlayback
 Connection::stopSamplesPlayback

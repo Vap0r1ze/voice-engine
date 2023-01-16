@@ -103,6 +103,7 @@ export type VoiceConnection = {
     filter: ConnectionStatsFilter,
     cb: (stats: Json<ConnectionStats>) => void,
   ): void
+  getStats: Callback<[stats: Json<ConnectionStats>]>
   getEncryptionModes: Callback<[modes: CipherMode[]]>
 
   setPingInterval(ms: number): void
