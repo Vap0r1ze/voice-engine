@@ -18,6 +18,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
+name = "boisu-core"
+version = "0.1.0"
+dependencies = [
+ "napi",
+ "napi-build",
+ "napi-derive",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -185,15 +194,6 @@ name = "unicode-segmentation"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0fdbf052a0783de01e944a6ce7a8cb939e295b1e7be835a1112c3b9a7f047a5a"
-
-[[package]]
-name = "voice-engine-native"
-version = "0.1.0"
-dependencies = [
- "napi",
- "napi-build",
- "napi-derive",
-]
 
 [[package]]
 name = "winapi"

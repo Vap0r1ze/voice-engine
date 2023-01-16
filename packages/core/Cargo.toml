@@ -1,5 +1,5 @@
 [package]
-name = "voice-engine-native"
+name = "boisu-core"
 version = "0.1.0"
 license = "MIT"
 authors = ["Justice Almanzar <superdash993@gmail.com>"]
