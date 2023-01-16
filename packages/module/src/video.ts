@@ -1,5 +1,5 @@
-import { VoiceEngine as engine } from 'voice-engine-native';
-import { FrameCallback, ImgData } from 'voice-engine-native/types/data';
+import * as engine from '@boisu/core';
+import { FrameCallback, ImgData } from '@boisu/core/types/data';
 import { popouts } from './globals';
 
 type FrameSizeCallback = (width: number, height: number) => void;

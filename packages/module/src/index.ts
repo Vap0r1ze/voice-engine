@@ -1,5 +1,6 @@
 import * as engineCore from '@boisu/core';
 import { DegradationPreference } from '@boisu/core/types/transport';
+import { platform } from 'process';
 import { FeatureFlag, Manager } from './manager';
 import {
     addVideoOutputSink,
@@ -20,6 +21,7 @@ export function createVoiceEngine(manager: Manager) {
         ...engineCore,
 
         DegradationPreference,
+        platform,
 
         createOwnStreamConnectionWithOptions:
             engineCore.createVoiceConnectionWithOptions,
