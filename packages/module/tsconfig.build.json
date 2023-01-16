@@ -1,12 +1,12 @@
 {
-  "$schema": "http://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "declaration": true,
+    "$schema": "http://json.schemastore.org/tsconfig",
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "declaration": true,
 
-    "target": "ES2020",
-    "module": "CommonJS"
-  }
+        "target": "ES2020",
+        "module": "CommonJS"
+    }
 }

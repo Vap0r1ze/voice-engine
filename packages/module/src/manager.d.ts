@@ -1,3 +1,3 @@
 export interface Manager {
-  features: null; // TODO
+    features: null; // TODO
 }

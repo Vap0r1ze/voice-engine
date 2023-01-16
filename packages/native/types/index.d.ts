@@ -1,5 +1,5 @@
-import { VoiceEngine } from './engine'
+import { VoiceEngine } from './engine';
 
 declare module 'voice-engine-native' {
-  export const VoiceEngine: VoiceEngine
+    export const VoiceEngine: VoiceEngine;
 }

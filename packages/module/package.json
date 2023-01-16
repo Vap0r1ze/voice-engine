@@ -1,19 +1,19 @@
 {
-  "name": "voice-engine",
-  "version": "0.1.0",
-  "description": "",
-  "author": "Vap0r1ze",
-  "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "esbuild ./src/index.ts --outdir=dist --format=cjs"
-  },
-  "dependencies": {
-    "voice-engine-native": "*"
-  },
-  "devDependencies": {
-    "@types/node": "16",
-    "typescript": "^4.9.4"
-  }
+    "name": "voice-engine",
+    "version": "0.1.0",
+    "description": "",
+    "author": "Vap0r1ze",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "esbuild ./src/index.ts --outdir=dist --format=cjs"
+    },
+    "dependencies": {
+        "voice-engine-native": "*"
+    },
+    "devDependencies": {
+        "@types/node": "16",
+        "typescript": "^4.9.4"
+    }
 }
