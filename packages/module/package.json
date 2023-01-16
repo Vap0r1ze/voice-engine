@@ -7,7 +7,7 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "esbuild ./src/index.ts --outdir=dist --format=cjs"
+        "build": "tsc --project tsconfig.build.json"
     },
     "dependencies": {
         "voice-engine-native": "*"
