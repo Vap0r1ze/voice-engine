@@ -4,8 +4,10 @@ export type ScreenSource = {
     rid: string;
     rtxSsrc: number;
     ssrc: number;
-    maxBitrate: number;
-    maxPixelCount: number;
+    maxBitrate?: number;
+    maxFrameRate?: number;
+    maxPixelCount?: number;
+    maxResolution?: { type: 'fixed'; width: number; height: number };
     quality: number;
 };
 
@@ -24,8 +26,6 @@ export type StreamParameters = ScreenSource &
     (
         | {
               active: true;
-              maxFrameRate: number;
-              maxResolution: { type: 'fixed'; width: number; height: number };
               profile?: any;
           }
         | {

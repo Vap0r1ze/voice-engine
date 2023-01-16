@@ -137,6 +137,7 @@ export type VoiceEngine = {
         // TODO: figure out what `a` is
         onConnect: (a: string, data: ConnectionData) => void,
     ): VoiceConnection;
+    /** This is just an alias for the above */
     createOwnStreamConnectionWithOptions(
         userId: string,
         options: ConnectionOptions,

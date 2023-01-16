@@ -5,7 +5,7 @@ export type AudioCodec = {
     freq: number;
     type: number;
     /** Codec params (eg: stereo) */
-    params: Record<string, string>;
+    params?: Record<string, string>;
 };
 export interface AudioEncoder extends AudioCodec {
     rate: number;
@@ -37,7 +37,7 @@ export type InputModeOptions =
           inputMode: AudioInputMode.Activity;
           inputModeOptions: {
               vadAutoThreshold: number;
-              badThreshold: number;
+              vadThreshold: number;
               vadLeading: number;
               vadTrailing: number;
               vadUseKrisp: boolean;

@@ -2,6 +2,7 @@ import { Callback, Json } from './data';
 import { CipherMode } from './encryption';
 import { ConnectionStats, ConnectionStatsFilter } from './stats';
 import { DesktopSourceStatus, ScreenSource, StreamParameters } from './screen';
+import { ConnectionTransportOptions } from './transport';
 
 export type ConnectionOptions = {
     /** RTC Server IP */
@@ -11,7 +12,7 @@ export type ConnectionOptions = {
     experiments: string[];
     modes: CipherMode[];
     qosEnabled: boolean;
-    streamParameters: StreamParameters[];
+    streamParameters: readonly StreamParameters[];
     streamUserId?: string;
 };
 export type ConnectionData = {
@@ -37,6 +38,7 @@ type RemoteUser = {
 };
 
 export type VoiceConnection = {
+    setTransportOptions(options: ConnectionTransportOptions): void;
     destroy(): void;
 
     /** Sends speaking flags of either local or remote user */
@@ -86,7 +88,7 @@ export type VoiceConnection = {
     setOnDesktopSourceEnded: Callback; // FIXME
 
     setSelfDeafen(deafened: boolean): void;
-    /** Will be called with true on stream connections */
+    /** Will be called with true on screenshare connections */
     setSelfMute(muted: boolean): void;
     setSelfPan(left: number, right: number): void;
     setPTTActive(active: boolean, isPriority: boolean): void;
@@ -110,4 +112,5 @@ export type VoiceConnection = {
     setPingCallback: Callback<
         [pingMs: number, remoteIp: string, remotePort: number, i: number]
     >;
+    setPingTimeoutCallback: Callback<[any]>; // FIXME
 };

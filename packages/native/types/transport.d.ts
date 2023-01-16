@@ -19,7 +19,12 @@ export type ConnectionTransportOptions = Partial<InputModeOptions> &
         attenuateWhileSpeakingSelf: boolean;
         attenuation: boolean;
         attenuationFactor: number;
+        /** Volume multiplier on non-priority speakers when priority speaker is speaking */
         prioritySpeakerDucking: number;
+
+        callBitRate: number;
+        callMinBitRate: number;
+        callMaxBitRate: number;
 
         /* Video */
         encodingVideoBitRate: number;
@@ -56,7 +61,7 @@ export type ConnectionTransportOptions = Partial<InputModeOptions> &
         encryptionSettings: {
             // NOTE: Structure may not account for all cipher modes
             mode: CipherMode;
-            secretKey: string;
+            secretKey: number[];
         };
         userChannelIds: { userId: string; channelId: string; guildId?: string };
     }>;

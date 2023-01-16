@@ -5,6 +5,12 @@ export type ImgData = {
     pixelFormat: 'rgba'; // NOTE: There may be more pixel formats
 };
 
-export type Json<T> = string;
+export type Json<T> = string & { ['\u2728']: T };
+
+declare global {
+    interface JSON {
+        parse<D extends Json<any>>(data: D): D['\u2728'];
+    }
+}
 
 export type Callback<T extends any[] = []> = (cb: (...args: T) => void) => void;
