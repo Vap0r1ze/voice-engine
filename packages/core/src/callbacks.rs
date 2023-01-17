@@ -6,21 +6,29 @@ pub struct CallbackStore {
 }
 
 pub struct CallbackRef {
-    reference: Ref<()>,
+    env: Env,
+    pub reference: Ref<()>,
 }
 
 impl CallbackRef {
-    pub fn new(env: &Env, callback: JsFunction) -> napi::Result<CallbackRef> {
+    pub fn new(env: Env, callback: JsFunction) -> napi::Result<CallbackRef> {
         let reference = env.create_reference::<JsFunction>(callback)?;
-        Ok(CallbackRef { reference })
+        Ok(CallbackRef { reference, env })
     }
     pub fn call<V: NapiValue>(
         &self,
-        env: &Env,
         this: Option<&JsObject>,
         args: &[V],
     ) -> napi::Result<JsUnknown> {
-        let value: JsFunction = env.get_reference_value(&self.reference)?;
+        let value: JsFunction = self.env.get_reference_value(&self.reference)?;
         value.call(this, args)
+    }
+}
+
+impl Drop for CallbackRef {
+    fn drop(&mut self) {
+        if let Err(e) = self.reference.unref(self.env) {
+            eprintln!("Error unrefing callback: {}", e);
+        }
     }
 }

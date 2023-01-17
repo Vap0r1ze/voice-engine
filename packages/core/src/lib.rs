@@ -25,7 +25,7 @@ impl VoiceCore {
         env: Env,
         callback: JsFunction,
     ) -> napi::Result<()> {
-        self.callbacks.device_change = Some(CallbackRef::new(&env, callback)?);
+        self.callbacks.device_change = Some(CallbackRef::new(env, callback)?);
         Ok(())
     }
     #[napi]
@@ -34,7 +34,7 @@ impl VoiceCore {
         env: Env,
         callback: JsFunction,
     ) -> napi::Result<()> {
-        self.callbacks.volume_change = Some(CallbackRef::new(&env, callback)?);
+        self.callbacks.volume_change = Some(CallbackRef::new(env, callback)?);
         Ok(())
     }
     #[napi]
@@ -43,7 +43,6 @@ impl VoiceCore {
             let format = env.create_string("Volume was set to %o, also six = %o")?;
             let six = env.create_int32(6)?;
             reference.call(
-                &env,
                 None,
                 &[
                     format.into_unknown(),
