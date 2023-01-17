@@ -34,10 +34,6 @@ impl VoiceCore {
         env: Env,
         callback: JsFunction,
     ) -> napi::Result<()> {
-        if let Some(old_ref) = &mut self.callbacks.volume_change {
-            old_ref.reference.unref(env)?;
-        }
-
         self.callbacks.volume_change = Some(CallbackRef::new(env, callback)?);
         Ok(())
     }
