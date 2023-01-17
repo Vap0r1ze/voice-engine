@@ -1,7 +1,7 @@
 import { Callback, Json } from './data';
 import { CipherMode } from './encryption';
-import { ConnectionStats, ConnectionStatsFilter } from './stats';
 import { DesktopSourceStatus, ScreenSource, StreamParameters } from './screen';
+import { ConnectionStats, ConnectionStatsFilter } from './stats';
 import { ConnectionTransportOptions } from './transport';
 
 export type ConnectionOptions = {
@@ -47,7 +47,7 @@ export type VoiceConnection = {
 
     /** Usually sent after `SoundshareAttachRequested` works */
     setOnSoundshare: Callback<[success: boolean]>;
-    setOnSoundshareEnded: Callback<[any]>; // FIXME
+    setOnSoundshareEnded: Callback<[]>;
     setOnSoundshareFailed: Callback<
         [code: number, reason: string, willRetry: boolean] // TODO: check `willRetry`
     >;
@@ -85,7 +85,7 @@ export type VoiceConnection = {
         hdrCaptureMode: 'never' | 'always' | 'permittedDevicesOnly';
     }): void;
     setDesktopSourceStatusCallback: Callback<[status: DesktopSourceStatus]>;
-    setOnDesktopSourceEnded: Callback; // FIXME
+    setOnDesktopSourceEnded: Callback<[]>;
 
     setSelfDeafen(deafened: boolean): void;
     /** Will be called with true on screenshare connections */
@@ -112,5 +112,9 @@ export type VoiceConnection = {
     setPingCallback: Callback<
         [pingMs: number, remoteIp: string, remotePort: number, i: number]
     >;
-    setPingTimeoutCallback: Callback<[any]>; // FIXME
+    // Discord doesn't use e and t
+    // n is likely attempt and r timeout / interval
+    // i.handlePingTimeout = function(e, t, n, r) { i.emit(a.Sh.PingTimeout, n, r > 0 ? r : 4e3) }
+    setPingTimeoutCallback: Callback<[e: unknown, t: unknown, n: number, r: number]>; // FIXME
 };
+
