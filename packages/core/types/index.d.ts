@@ -3,12 +3,12 @@ import { CameraDevice, MediaFilterSettings } from './camera';
 import {
     ConnectionData,
     ConnectionOptions,
-    VoiceConnection,
+    VoiceConnection
 } from './connection';
 import { Callback, FrameCallback, Json } from './data';
-import { ScreenPreview, WindowPreview } from './screen';
-import { VideoCodecCapabilities } from './video';
 import { AudioSubsystem, EngineTransportOptions } from './engine';
+import { ScreenPreview, WindowPreview } from './screen';
+import { CodecSurvey, VideoCodecCapabilities } from './video';
 
 declare module '@boisu/core' {
     export const getAudioSubsystem: Callback<
@@ -80,11 +80,12 @@ declare module '@boisu/core' {
     export function addDirectVideoOutputSink(sinkId: string): void;
     export function removeDirectVideoOutputSink(sinkId: string): void;
     export function clearVideoOutputSink(streamId: string): void;
-    // TODO: what is something
+    // If onFrame is not passed, this function will clear the sink
+    // TODO: what is "something" - Discord always passes true
     export function setVideoOutputSink(
         streamId: string,
-        onFrame: FrameCallback,
-        something: boolean,
+        onFrame?: FrameCallback,
+        something?: boolean,
     ): void;
     export function signalVideoOutputSinkReady(streamId: string): void;
 
@@ -123,15 +124,25 @@ declare module '@boisu/core' {
     export const getOutputDevices: Callback<[devices: AudioDevice[]]>;
 
     /* == Connection == */
-    export function createVoiceConnection(
+    // createOwnStreamConnectionWithOptions is an alias for this function
+    export function createVoiceConnectionWithOptions(
         userId: string,
         options: ConnectionOptions,
-        // TODO: figure out what `a` is
-        onConnect: (a: string, data: ConnectionData) => void,
+        onConnect: (error: string | null, data: ConnectionData) => void,
     ): VoiceConnection;
+    // this is basically just another way to call createVoiceConnectionWithOptions
+    export function createVoiceConnection(
+        ssrc: ConnectionOptions["ssrc"],
+        userId: ConnectionOptions["streamUserId"],
+        address: ConnectionOptions["address"],
+        port: ConnectionOptions["port"],
+        onConnect: (error: string | null, data: ConnectionData) => void,
+        experiments: ConnectionOptions["experiments"],
+        streamParameters: ConnectionOptions["streamParameters"],
+    ): VoiceConnection;
+
     /** Usually called when the connection ends */
-    // TODO: figure out what returns when not `null`
-    export const getCodecSurvey: Callback<[responseData: Json<any | null>]>;
+    export const getCodecSurvey: Callback<[responseData: Json<CodecSurvey | null>]>;
     export const getCodecCapabilities: Callback<
         [capabilities: Json<VideoCodecCapabilities[]>]
     >;

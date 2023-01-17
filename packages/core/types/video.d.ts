@@ -12,3 +12,9 @@ export type VideoCodecCapabilities = {
     encode: boolean;
     decode: boolean;
 };
+
+export type CodecSurvey = {
+    // probably VideoCodec[] or VideoCodecName[]
+    available_video_encoders: unknown;
+    available_video_decoders: unknown;
+};
