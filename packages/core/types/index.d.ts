@@ -84,8 +84,8 @@ declare module '@boisu/core' {
     // TODO: what is "something" - Discord always passes true
     export function setVideoOutputSink(
         streamId: string,
-        onFrame?: FrameCallback,
-        something?: boolean,
+        onFrame: FrameCallback,
+        something: boolean,
     ): void;
     export function signalVideoOutputSinkReady(streamId: string): void;
 
