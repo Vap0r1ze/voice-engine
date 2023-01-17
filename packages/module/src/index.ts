@@ -23,8 +23,8 @@ export function createVoiceEngine(manager: Manager) {
         DegradationPreference,
         platform,
 
-        createOwnStreamConnectionWithOptions:
-            engineCore.createVoiceConnectionWithOptions,
+        createOwnStreamConnectionWithOptions: engineCore.createVoiceConnection,
+        createVoiceConnectionWithOptions: engineCore.createVoiceConnection,
 
         // Video
         addVideoOutputSink,

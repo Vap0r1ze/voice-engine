@@ -1,4 +1,4 @@
-import { VoiceEngine as engine } from '..';
+import * as core from '..';
 
 const streamParams = [
     {
@@ -32,7 +32,7 @@ const streamParams = [
         },
     },
 ] as const;
-const conn = engine.createVoiceConnectionWithOptions(
+const conn = core.createVoiceConnection(
     '123456789012345678',
     {
         ssrc: 123400,
@@ -71,10 +71,10 @@ conn.setTransportOptions({
     },
 });
 conn.setTransportOptions({ remoteSinkWantsMaxFramerate: 20 });
-engine.setTransportOptions({ echoCancellation: false });
-engine.setTransportOptions({ noiseSuppression: false });
-engine.setTransportOptions({ automaticGainControl: true });
-engine.setTransportOptions({ noiseCancellation: true });
+core.setTransportOptions({ echoCancellation: false });
+core.setTransportOptions({ noiseSuppression: false });
+core.setTransportOptions({ automaticGainControl: true });
+core.setTransportOptions({ noiseCancellation: true });
 conn.setTransportOptions({
     attenuation: false,
     attenuationFactor: 1,
@@ -106,9 +106,7 @@ conn.setLocalVolume('vap id', 2); // user "vap id" 200% volume (so loud)
 
 // await createVoiceConnectionWithOptions callback
 
-engine.getCodecCapabilities((capabilities) =>
-    console.log('caps', capabilities),
-);
+core.getCodecCapabilities((capabilities) => console.log('caps', capabilities));
 
 // await getCodecCapabilities callback
 
@@ -143,15 +141,15 @@ conn.setOnSpeakingWhileMutedCallback(() =>
 conn.setPingInterval(5000);
 conn.setPingTimeoutCallback(() => console.log('ping timeout'));
 // Things like this must be adjustable mid-connection
-engine.setTransportOptions({
+core.setTransportOptions({
     builtInEchoCancellation: true,
     echoCancellation: false,
     noiseSuppression: false,
     automaticGainControl: true,
     noiseCancellation: true,
 });
-engine.setNoInputThreshold(-100); // will always be -100 i think
-engine.setNoInputCallback((crosses) =>
+core.setNoInputThreshold(-100); // will always be -100 i think
+core.setNoInputCallback((crosses) =>
     console.log(crosses ? 'yay input has noise' : 'input is silent?!?!'),
 );
 

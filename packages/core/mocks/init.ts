@@ -1,28 +1,27 @@
-import { VoiceEngine as engine } from '..';
+import * as core from '..';
 
-engine.setDeviceChangeCallback(() => {});
-engine.setVolumeChangeCallback(() => {});
-engine.setVideoInputInitializationCallback(() => {});
-engine.setTransportOptions({
+core.setDeviceChangeCallback(() => {});
+core.setVolumeChangeCallback(() => {});
+core.setVideoInputInitializationCallback(() => {});
+core.setTransportOptions({
     ducking: false,
     idleJitterBufferFlush: true,
 });
-engine.getAudioSubsystem(() => {});
-engine.getDebugLogging();
-engine.setActiveSinksChangeCallback(() => {});
-engine.getInputDevices(([firstDevice]) => {
+core.getAudioSubsystem(() => {});
+core.getDebugLogging();
+core.getInputDevices(([firstDevice]) => {
     console.assert(firstDevice.name === 'default' && firstDevice.index === -1);
 });
-engine.getOutputDevices(([firstDevice]) => {
+core.getOutputDevices(([firstDevice]) => {
     console.assert(firstDevice.name === 'default' && firstDevice.index === -1);
 });
-engine.getVideoInputDevices(() => {}); // Cameras
-engine.setInputDevice('default');
-engine.setOutputDevice('default');
-// engine.setVideoInputDevice('disabled');
+core.getVideoInputDevices(() => {}); // Cameras
+core.setInputDevice('default');
+core.setOutputDevice('default');
+// core.setVideoInputDevice('disabled');
 // the above doesnt get called but it's the default state
-engine.setInputVolume(1);
-engine.setOutputVolume(1);
-engine.setTransportOptions({ h264Enabled: true });
-engine.setTransportOptions({ av1Enabled: true });
-engine.setAecDump(true);
+core.setInputVolume(1);
+core.setOutputVolume(1);
+core.setTransportOptions({ h264Enabled: true });
+core.setTransportOptions({ av1Enabled: true });
+core.setAecDump(true);

@@ -123,7 +123,7 @@ declare module '@boisu/core' {
     export const getOutputDevices: Callback<[devices: AudioDevice[]]>;
 
     /* == Connection == */
-    export function createVoiceConnectionWithOptions(
+    export function createVoiceConnection(
         userId: string,
         options: ConnectionOptions,
         // TODO: figure out what `a` is
