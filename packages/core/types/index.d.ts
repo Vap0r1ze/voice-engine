@@ -3,7 +3,7 @@ import { CameraDevice, MediaFilterSettings } from './camera';
 import {
     ConnectionData,
     ConnectionOptions,
-    VoiceConnection
+    VoiceConnection,
 } from './connection';
 import { Callback, FrameCallback, Json } from './data';
 import { AudioSubsystem, EngineTransportOptions } from './engine';
@@ -124,25 +124,17 @@ declare module '@boisu/core' {
     export const getOutputDevices: Callback<[devices: AudioDevice[]]>;
 
     /* == Connection == */
-    // createOwnStreamConnectionWithOptions is an alias for this function
-    export function createVoiceConnectionWithOptions(
+    // alias for createVoiceConnectionWithOptions and createOwnStreamConnectionWithOptions
+    export function createVoiceConnection(
         userId: string,
         options: ConnectionOptions,
         onConnect: (error: string | null, data: ConnectionData) => void,
     ): VoiceConnection;
-    // this is basically just another way to call createVoiceConnectionWithOptions
-    export function createVoiceConnection(
-        ssrc: ConnectionOptions["ssrc"],
-        userId: ConnectionOptions["streamUserId"],
-        address: ConnectionOptions["address"],
-        port: ConnectionOptions["port"],
-        onConnect: (error: string | null, data: ConnectionData) => void,
-        experiments: ConnectionOptions["experiments"],
-        streamParameters: ConnectionOptions["streamParameters"],
-    ): VoiceConnection;
 
     /** Usually called when the connection ends */
-    export const getCodecSurvey: Callback<[responseData: Json<CodecSurvey | null>]>;
+    export const getCodecSurvey: Callback<
+        [responseData: Json<CodecSurvey | null>]
+    >;
     export const getCodecCapabilities: Callback<
         [capabilities: Json<VideoCodecCapabilities[]>]
     >;

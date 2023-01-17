@@ -1,3 +1,9 @@
 {
-    "rust-analyzer.linkedProjects": [ "packages/core/Cargo.toml" ]
+    "rust-analyzer.linkedProjects": [ "packages/core/Cargo.toml" ],
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
