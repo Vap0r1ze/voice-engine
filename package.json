@@ -10,6 +10,7 @@
         "lint": "turbo run lint"
     },
     "devDependencies": {
+        "prettier": "^2.8.3",
         "turbo": "latest"
     },
     "packageManager": "yarn@1.22.19"

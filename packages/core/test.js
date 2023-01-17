@@ -1,4 +1,4 @@
-const VoiceEngine = require(".");
+const VoiceEngine = require('.');
 
 const core = VoiceEngine.start();
 

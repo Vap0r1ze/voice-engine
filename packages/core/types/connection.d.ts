@@ -115,6 +115,7 @@ export type VoiceConnection = {
     // Discord doesn't use e and t
     // n is likely attempt and r timeout / interval
     // i.handlePingTimeout = function(e, t, n, r) { i.emit(a.Sh.PingTimeout, n, r > 0 ? r : 4e3) }
-    setPingTimeoutCallback: Callback<[e: unknown, t: unknown, n: number, r: number]>; // FIXME
+    setPingTimeoutCallback: Callback<
+        [e: unknown, t: unknown, n: number, r: number]
+    >; // FIXME
 };
-

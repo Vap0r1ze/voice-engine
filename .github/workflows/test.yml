@@ -1,0 +1,29 @@
+name: test
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Use Node.js 18
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 18
+                  #   cache: 'yarn'
+
+            - name: Install dependencies
+              run: yarn
+
+            - name: Lint
+              run: yarn lint
+
+            - name: Build
+              run: yarn build
