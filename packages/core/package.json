@@ -12,8 +12,10 @@
     ],
     "scripts": {
         "build": "napi build --platform --release",
+        "debug": "napi build --platform",
         "prepare": "node scripts/prepare-platforms.js",
-        "test": "cargo test"
+        "test": "cargo test",
+        "watch": "nodemon --ext rs,js test.js --exec \"yarn debug && node test.js\""
     },
     "napi": {
         "name": "dist/core",
@@ -35,7 +37,8 @@
     },
     "devDependencies": {
         "@napi-rs/cli": "^2.13.2",
-        "@napi-rs/triples": "^1.1.0"
+        "@napi-rs/triples": "^1.1.0",
+        "nodemon": "^2.0.20"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",

@@ -6,7 +6,7 @@ pub struct CallbackStore {
 }
 
 pub struct CallbackRef {
-    reference: Ref<()>,
+    pub reference: Ref<()>,
 }
 
 impl CallbackRef {
