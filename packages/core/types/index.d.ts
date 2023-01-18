@@ -29,6 +29,14 @@ declare module '@boisu/core' {
     export function setDebugLogging(enabled: boolean): void;
     export function getDebugLogging(): boolean;
 
+    export function rankRtcRegions<R extends string>(
+        regions: {
+            region: R;
+            ips: string[];
+        }[],
+        cb: (regions: R[]) => void,
+    );
+
     /* == General Devices == */
     export const setDeviceChangeCallback: Callback<
         [

@@ -13,6 +13,9 @@ napi = "2"
 napi-derive = "2"
 tokio = "1.24.1"
 
+[dependencies.core-macros]
+path = "../core-macros"
+
 [build-dependencies]
 napi-build = "2"
 

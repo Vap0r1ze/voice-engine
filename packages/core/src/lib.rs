@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use callbacks::{CallbackRef, CallbackStore};
+use callbacks::{CallbackRef, CoreCallbackStore};
 use connection::{ConnectionOptions, VoiceConnection};
 use napi::{Env, JsFunction, JsNumber};
 use napi_derive::napi;
@@ -12,31 +12,22 @@ mod connection;
 mod crypt;
 
 #[napi]
+#[derive(Default)]
 pub struct VoiceCore {
-    callbacks: CallbackStore,
+    callbacks: CoreCallbackStore,
     connections: HashMap<(u64, u32), VoiceConnection>,
 }
 
+define_callback!(VoiceCore, set_device_change_callback, device_change);
+define_callback!(VoiceCore, set_volume_change_callback, volume_change);
+define_callback!(
+    VoiceCore,
+    set_video_input_initialization_callback,
+    video_input_init
+);
+
 #[napi]
 impl VoiceCore {
-    #[napi]
-    pub fn set_device_change_callback(
-        &mut self,
-        env: Env,
-        callback: JsFunction,
-    ) -> napi::Result<()> {
-        self.callbacks.device_change = Some(CallbackRef::new(env, callback)?);
-        Ok(())
-    }
-    #[napi]
-    pub fn set_volume_change_callback(
-        &mut self,
-        env: Env,
-        callback: JsFunction,
-    ) -> napi::Result<()> {
-        self.callbacks.volume_change = Some(CallbackRef::new(env, callback)?);
-        Ok(())
-    }
     #[napi]
     pub fn set_local_volume(&self, env: Env, volume: JsNumber) -> napi::Result<()> {
         if let Some(reference) = &self.callbacks.volume_change {
@@ -81,11 +72,5 @@ impl VoiceCore {
 
 #[napi]
 fn _start() -> VoiceCore {
-    VoiceCore {
-        callbacks: CallbackStore {
-            device_change: None,
-            volume_change: None,
-        },
-        connections: HashMap::new(),
-    }
+    Default::default()
 }

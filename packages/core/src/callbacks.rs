@@ -1,8 +1,10 @@
 use napi::{Env, JsFunction, JsObject, JsUnknown, NapiValue, Ref};
 
-pub struct CallbackStore {
+#[derive(Default)]
+pub struct CoreCallbackStore {
     pub device_change: Option<CallbackRef>,
     pub volume_change: Option<CallbackRef>,
+    pub video_input_init: Option<CallbackRef>,
 }
 
 pub struct CallbackRef {
@@ -31,4 +33,25 @@ impl Drop for CallbackRef {
             eprintln!("Error unrefing callback: {}", e);
         }
     }
+}
+
+/// ### Usage
+/// ```rs
+/// define_callback!(Struct, method_name, callback_key)
+/// ```
+/// ### Description
+/// Implements a `#[napi]` method on a `#[napi]` struct.
+/// The method takes a `JsFunction` and saves the respective `CallbackRef` to `self.callbacks.${callback_key}`
+#[macro_export]
+macro_rules! define_callback {
+    ( $Type:ident, $func:ident, $key:ident ) => {
+        #[napi]
+        impl $Type {
+            #[napi]
+            pub fn $func(&mut self, env: Env, callback: JsFunction) -> napi::Result<()> {
+                self.callbacks.$key = Some(CallbackRef::new(env, callback)?);
+                Ok(())
+            }
+        }
+    };
 }
