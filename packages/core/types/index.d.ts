@@ -35,7 +35,7 @@ declare module '@boisu/core' {
             ips: string[];
         }[],
         cb: (regions: R[]) => void,
-    );
+    ): void;
 
     /* == General Devices == */
     export const setDeviceChangeCallback: Callback<
