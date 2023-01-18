@@ -38,31 +38,23 @@ fn str_enum_expand(item: ItemEnum) -> Result<TokenStream, syn::Error> {
                 Ok((&variant.ident, lit_str.value()))
             })
             .collect::<Result<Vec<_>, syn::Error>>()?;
-        let variants = enum_pairs.iter().map(|pair| pair.0).collect::<Vec<_>>();
-        let (try_into_arms, from_arms): (Vec<_>, Vec<_>) = enum_pairs
+        let (each_variant, each_str) = enum_pairs
             .iter()
-            .map(|pair| {
-                let variant = pair.0;
-                let value = &pair.1;
-                (
-                    quote! { #value => Ok(#enum_name::#variant) },
-                    quote! { #enum_name::#variant => String::from(#value) },
-                )
-            })
-            .unzip();
+            .map(|&(ref a, ref b)| (a, b))
+            .unzip::<_, _, Vec<&syn::Ident>, Vec<_>>();
         let invalid_str = format!("Invalid {} '{{}}'", enum_name.to_string());
 
         Ok(quote! {
             #[derive(Clone)]
             pub enum #enum_name {
-                #(#variants),*
+                #(#each_variant),*
             }
             impl TryInto<#enum_name> for &String {
                 type Error = ();
 
                 fn try_into(self) -> Result<#enum_name, Self::Error> {
                     match self.as_str() {
-                        #(#try_into_arms,)*
+                        #( #each_str => Ok(#enum_name::#each_variant), )*
                         _ => Err(()),
                     }
                 }
@@ -70,11 +62,11 @@ fn str_enum_expand(item: ItemEnum) -> Result<TokenStream, syn::Error> {
             impl From<#enum_name> for String {
                 fn from(value: #enum_name) -> Self {
                     match value {
-                        #(#from_arms,)*
+                        #( #enum_name::#each_variant => String::from(#each_str), )*
                     }
                 }
             }
-            impl ToNapiValue for #enum_name {
+            impl napi::bindgen_prelude::ToNapiValue for #enum_name {
                 // String already impls ToNapiValue, I trust String::to_napi_value is safe lol
                 unsafe fn to_napi_value(
                     env: napi::sys::napi_env,
@@ -83,8 +75,7 @@ fn str_enum_expand(item: ItemEnum) -> Result<TokenStream, syn::Error> {
                     String::to_napi_value(env, String::from(val))
                 }
             }
-
-            impl FromNapiValue for #enum_name {
+            impl napi::bindgen_prelude::FromNapiValue for #enum_name {
                 // Should be safe
                 unsafe fn from_napi_value(
                     env: napi::sys::napi_env,
@@ -100,7 +91,6 @@ fn str_enum_expand(item: ItemEnum) -> Result<TokenStream, syn::Error> {
                     }
                 }
             }
-
         }
         .into())
     } else {
