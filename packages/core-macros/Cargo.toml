@@ -8,5 +8,6 @@ publish = false
 proc-macro = true
 
 [dependencies]
+napi-derive-backend = "1"
 syn = "1.0"
 quote = "1.0"
