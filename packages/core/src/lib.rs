@@ -6,16 +6,24 @@ use callbacks::{CallbackRef, CoreCallbackStore};
 use connection::{ConnectionOptions, VoiceConnection};
 use napi::{Env, JsFunction, JsNumber};
 use napi_derive::napi;
+use transport::CoreTransportOptions;
 
 mod callbacks;
 mod connection;
 mod crypt;
+mod transport;
 
 #[napi]
 #[derive(Default)]
 pub struct VoiceCore {
     callbacks: CoreCallbackStore,
-    connections: HashMap<(u64, u32), VoiceConnection>,
+    connections: HashMap<(String, u32), VoiceConnection>,
+    transport_opts: CoreTransportOptions,
+}
+
+#[napi]
+fn _start() -> VoiceCore {
+    Default::default()
 }
 
 define_callback!(VoiceCore, set_device_change_callback, device_change);
@@ -47,30 +55,30 @@ impl VoiceCore {
     }
 
     #[napi]
-    pub fn _create_voice_connection(
+    pub fn create_voice_connection(
         &mut self,
         user_id: String,
         options: ConnectionOptions,
     ) -> VoiceConnection {
         let conn = VoiceConnection {
             user_id: user_id.to_string(),
-            options: ConnectionOptions {
-                address: options.address,
-                port: options.port,
-                ssrc: options.ssrc,
-                modes: options.modes,
-                stream_params: options.stream_params,
-                stream_user_id: options.stream_user_id,
-            },
+            options: options.clone(),
+            ..Default::default()
         };
-        let id_num = user_id.parse::<u64>().unwrap();
         self.connections
-            .insert((id_num, options.ssrc), conn.clone());
+            .insert((user_id, options.ssrc), conn.clone());
         conn
     }
-}
 
-#[napi]
-fn _start() -> VoiceCore {
-    Default::default()
+    #[napi]
+    pub fn set_transport_options(&mut self, options: CoreTransportOptions) {
+        self.transport_opts.merge(options);
+    }
+
+    // Telemetry
+    #[napi]
+    pub fn get_codec_survey(&self, env: Env, callback: JsFunction) -> napi::Result<()> {
+        let _ = callback.call(None, &[env.create_string("null\n")?]);
+        Ok(())
+    }
 }

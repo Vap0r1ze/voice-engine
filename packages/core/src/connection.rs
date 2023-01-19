@@ -1,15 +1,16 @@
-use crate::crypt::*;
+use crate::{crypt::*, transport::ConnectionTransportOptions};
 use napi_derive::napi;
 
-#[napi(constructor)]
-#[derive(Clone)]
+#[napi]
+#[derive(Clone, Default)]
 pub struct VoiceConnection {
     pub user_id: String,
     pub options: ConnectionOptions,
+    pub transport_opts: ConnectionTransportOptions,
 }
 
 #[napi(object)]
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct ConnectionOptions {
     pub address: String,
     pub port: u16,
@@ -40,5 +41,10 @@ impl VoiceConnection {
             .map(|s| s.parse::<u8>())
             .collect::<Result<Vec<_>, _>>()
             .map_err(|_| napi::Error::from_reason("bad ip"))
+    }
+
+    #[napi]
+    pub fn _set_transport_options(&mut self, options: ConnectionTransportOptions) {
+        self.transport_opts.merge(options);
     }
 }
