@@ -8,9 +8,12 @@ use napi::{Env, JsFunction, JsNumber};
 use napi_derive::napi;
 use transport::CoreTransportOptions;
 
+mod audio;
 mod callbacks;
 mod connection;
 mod crypt;
+#[cfg(test)]
+mod tests;
 mod transport;
 
 #[napi]
