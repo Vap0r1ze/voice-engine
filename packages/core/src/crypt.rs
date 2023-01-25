@@ -1,6 +1,6 @@
-use core_macros::str_enum;
+use core_macros::napi_strum;
 
-#[str_enum]
+#[napi_strum]
 pub enum CipherMode {
     AeadAes256Gcm = "aead_aes256_gcm",
     AeadAes256GcmRtpsize = "aead_aes256_gcm_rtpsize",

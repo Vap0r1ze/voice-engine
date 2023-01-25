@@ -132,8 +132,14 @@ declare module '@boisu/core' {
     export const getOutputDevices: Callback<[devices: AudioDevice[]]>;
 
     /* == Connection == */
-    // alias for createVoiceConnectionWithOptions and createOwnStreamConnectionWithOptions
+    // for mic/camera, gets mapped to createVoiceConnectionWithOptions
     export function createVoiceConnection(
+        userId: string,
+        options: ConnectionOptions,
+        onConnect: (error: string | null, data: ConnectionData) => void,
+    ): VoiceConnection;
+    // for screenshare, gets mapped to createOwnStreamConnectionWithOptions
+    export function createScreenConnection(
         userId: string,
         options: ConnectionOptions,
         onConnect: (error: string | null, data: ConnectionData) => void,

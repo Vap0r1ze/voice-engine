@@ -1,12 +1,14 @@
-use crate::{crypt::*, transport::ConnectionTransportOptions};
+use std::{sync::mpsc, thread};
+
+use crate::{audio::AudioManager, crypt::*, transport::ConnectionTransportOptions};
 use napi_derive::napi;
 
 #[napi]
-#[derive(Clone, Default)]
-pub struct VoiceConnection {
+pub struct VoiceConnectionHandle {
     pub user_id: String,
     pub options: ConnectionOptions,
-    pub transport_opts: ConnectionTransportOptions,
+    thread_join: thread::JoinHandle<()>,
+    transport_tx: mpsc::Sender<ConnectionTransportOptions>,
 }
 
 #[napi(object)]
@@ -31,7 +33,25 @@ pub struct StreamParameters {
 }
 
 #[napi]
-impl VoiceConnection {
+impl VoiceConnectionHandle {
+    pub fn new(user_id: String, options: ConnectionOptions) -> Self {
+        let (transport_tx, transport_rx) = mpsc::channel();
+
+        let user_id_2 = user_id.clone();
+        let options_2 = options.clone();
+        let thread_join = thread::spawn(move || {
+            let mut connection = VoiceConnection::new(user_id_2, options_2, transport_rx);
+            connection.start();
+        });
+
+        Self {
+            user_id,
+            options,
+            thread_join,
+            transport_tx,
+        }
+    }
+
     #[napi]
     pub fn get_ip(&self) -> napi::Result<Vec<u8>> {
         self.options
@@ -44,7 +64,42 @@ impl VoiceConnection {
     }
 
     #[napi]
-    pub fn _set_transport_options(&mut self, options: ConnectionTransportOptions) {
-        self.transport_opts.merge(options);
+    pub fn set_transport_options(
+        &mut self,
+        options: ConnectionTransportOptions,
+    ) -> napi::Result<()> {
+        self.transport_tx.send(options).map_err(|_| {
+            napi::Error::from_reason("Could not send transport options as channel is closed")
+        })
+    }
+}
+
+pub struct VoiceConnection {
+    user_id: String,
+    options: ConnectionOptions,
+    transport_opts: ConnectionTransportOptions,
+    transport_rx: mpsc::Receiver<ConnectionTransportOptions>,
+}
+
+impl VoiceConnection {
+    pub fn new(
+        user_id: String,
+        options: ConnectionOptions,
+        transport_rx: mpsc::Receiver<ConnectionTransportOptions>,
+    ) -> Self {
+        Self {
+            user_id,
+            options,
+            transport_opts: ConnectionTransportOptions::default(),
+            transport_rx,
+        }
+    }
+
+    pub fn start(&mut self) {
+        loop {
+            for transport_opts in self.transport_rx.try_iter() {
+                self.transport_opts.merge(transport_opts);
+            }
+        }
     }
 }

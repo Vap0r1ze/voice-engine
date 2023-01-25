@@ -104,7 +104,7 @@ dependencies = [
  "napi-derive",
  "opus",
  "rtp",
- "tokio",
+ "samplerate",
 ]
 
 [[package]]
@@ -370,6 +370,15 @@ checksum = "b67380fd3b2fbe7527a606e18729d21c6f3951633d0500574c4dc22d2d638b9f"
 dependencies = [
  "cfg-if",
  "winapi",
+]
+
+[[package]]
+name = "libsamplerate-sys"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28853b399f78f8281cd88d333b54a63170c4275f6faea66726a2bea5cca72e0d"
+dependencies = [
+ "cmake",
 ]
 
 [[package]]
@@ -847,6 +856,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "samplerate"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e032b2b24715c4f982f483ea3abdb3c9ba444d9f63e87b2843d6f998f5ba2698"
+dependencies = [
+ "libsamplerate-sys",
 ]
 
 [[package]]

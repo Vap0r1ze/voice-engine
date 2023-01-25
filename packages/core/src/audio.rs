@@ -1,97 +1,122 @@
-use std::{
-    ops::Deref,
-    sync::{Arc, Mutex},
-};
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use std::sync::mpsc;
 
-use cpal::{
-    traits::{DeviceTrait, HostTrait, StreamTrait},
-    Sample, SampleFormat, SampleRate,
-};
+use napi_derive::napi;
 
 static OPUS_SAMPLE_RATES: [u32; 5] = [48000, 24000, 16000, 12000, 8000];
 
 pub struct AudioManager {
     host: cpal::Host,
+    frame_rx: mpsc::Receiver<AudioFrame>,
+    frame_tx: mpsc::Sender<AudioFrame>,
+    stream: Option<cpal::Stream>,
+}
+pub struct FrameRequest {
+    pub from_rate: u32,
+    pub to_rate: u32,
+    pub from_channels: usize,
+    pub to_channels: usize,
+}
+type AudioFrame = Vec<f32>;
+
+pub enum AudioDeviceType {
+    Input,
+    Output,
+}
+
+pub struct StreamRequest {
+    pub sample_rate: u32,
+    pub channels: u16,
 }
 
 impl AudioManager {
     pub fn new() -> Self {
+        let (frame_tx, frame_rx) = mpsc::channel();
         Self {
             host: cpal::default_host(),
+            frame_tx,
+            frame_rx,
+            stream: None,
         }
     }
 
-    pub fn get_devices(&self) -> Result<Vec<cpal::Device>, cpal::DevicesError> {
-        Ok(self.host.devices()?.collect())
+    pub fn get_input_devices(&self) -> Result<Vec<cpal::Device>, cpal::DevicesError> {
+        Ok(self.host.input_devices()?.collect())
+    }
+    pub fn get_default_input_device(&self) -> Option<cpal::Device> {
+        self.host.default_input_device()
+    }
+    pub fn get_output_devices(&self) -> Result<Vec<cpal::Device>, cpal::DevicesError> {
+        Ok(self.host.output_devices()?.collect())
+    }
+    pub fn get_default_output_device(&self) -> Option<cpal::Device> {
+        self.host.default_output_device()
     }
 
-    pub fn create_input_stream(&self, input: &cpal::Device) {
-        let supported_input_range = input
+    pub fn start_input_stream(&mut self, input: &cpal::Device, stream_req: &StreamRequest) {
+        let supported_input = input
             .supported_input_configs()
-            .expect("Failed to get input config")
+            .expect("Failed to get system input config")
             .next()
-            .expect("Failed to get next input config");
+            .expect("Failed to get system input config")
+            .with_max_sample_rate();
 
-        let supported_sample_rates =
-            supported_input_range.min_sample_rate().0..supported_input_range.max_sample_rate().0;
-
-        println!("Supported sample rates: {:?}", supported_sample_rates);
-
-        let sample_rate = OPUS_SAMPLE_RATES
-            .iter()
-            .find(|&&sample_rate| supported_sample_rates.contains(&sample_rate))
-            .expect("Failed to find supported sample rate");
-
-        let supported_input = supported_input_range.with_sample_rate(SampleRate(*sample_rate));
-        let input_config = supported_input.config();
+        let stream_config = supported_input.config();
 
         print!("Supported input config: {:?}", supported_input);
-        print!("Input config: {:?}", input_config);
+        print!("Input config: {:?}", stream_config);
 
         let err_fn = |err| eprintln!("an error occurred on the output audio stream: {}", err);
         let sample_format = supported_input.sample_format();
 
-        let mut opus_encoder = opus::Encoder::new(
-            input_config.sample_rate.0,
-            match input_config.channels {
-                1 => opus::Channels::Mono,
-                2 => opus::Channels::Stereo,
-                _ => panic!("Unsupported number of channels"),
-            },
-            opus::Application::Voip,
-        )
-        .expect("Failed to create opus encoder");
+        let frame_req = FrameRequest {
+            from_rate: stream_config.sample_rate.0,
+            to_rate: stream_req.sample_rate,
+            from_channels: stream_config.channels.into(),
+            to_channels: stream_req.channels.into(),
+        };
 
-        let writer = Arc::new(Mutex::new(opus_encoder));
-        let writer_2 = writer.clone();
+        let tx = self.frame_tx.clone();
 
         macro_rules! build_input_stream {
             ($type:ty) => {
                 input.build_input_stream(
-                    &input_config,
-                    |pcm: &[$type], _: &_| read_sample::<$type>(pcm, &writer_2),
+                    &stream_config,
+                    move |pcm: &[$type], _: &_| send_input_frame::<$type>(pcm, &frame_req, &tx),
                     err_fn,
                 )
             };
         }
 
         let stream = match sample_format {
-            SampleFormat::I16 => build_input_stream! {i16},
-            SampleFormat::U16 => build_input_stream! {u16},
-            SampleFormat::F32 => build_input_stream! {f32},
+            cpal::SampleFormat::I16 => build_input_stream! {i16},
+            cpal::SampleFormat::U16 => build_input_stream! {u16},
+            cpal::SampleFormat::F32 => build_input_stream! {f32},
         }
         .expect("Failed to build input stream");
         stream.play().expect("Failed to play stream");
+
         std::thread::sleep(std::time::Duration::from_secs(1));
         drop(stream);
-        writer.lock().unwrap().deref();
     }
 }
 
-fn read_sample<T: Sample>(pcm: &[T], encoder: &Arc<Mutex<opus::Encoder>>) {
-    println!(
-        "Data[{}]: {:?}",
-        pcm.len(),
-        pcm.iter().map(|s| s.to_f32()).collect::<Vec<f32>>()
-    );
+fn send_input_frame<T: cpal::Sample>(
+    pcm: &[T],
+    frame_req: &FrameRequest,
+    tx: &mpsc::Sender<AudioFrame>,
+) {
+    let input = pcm.iter().map(|s| s.to_f32()).collect::<Vec<f32>>();
+
+    // TODO: Stereo <-> Mono conversion
+
+    let resampled = samplerate::convert(
+        frame_req.from_rate,
+        frame_req.to_rate,
+        frame_req.from_channels,
+        samplerate::ConverterType::SincBestQuality,
+        &input,
+    )
+    .expect("Failed to resample");
+    tx.send(resampled).expect("Failed to send audio frame");
 }

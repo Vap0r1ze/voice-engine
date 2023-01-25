@@ -7,7 +7,7 @@ use syn::{Expr, ItemEnum, Lit, Visibility};
 
 use super::write_to_typedef;
 
-pub(super) fn str_enum_expand(item: ItemEnum) -> Result<TokenStream, syn::Error> {
+pub fn expand(item: ItemEnum) -> Result<TokenStream, syn::Error> {
     if let Visibility::Public(_) = item.vis {
         let enum_name = item.ident;
         let enum_pairs = item

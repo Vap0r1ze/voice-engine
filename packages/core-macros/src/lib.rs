@@ -5,12 +5,12 @@ use napi_derive_backend::TypeDef;
 use proc_macro::TokenStream;
 use syn::{parse, ItemEnum};
 
-mod str_enum;
+mod napi_strum;
 
 #[proc_macro_attribute]
-pub fn str_enum(_attr: TokenStream, input: TokenStream) -> TokenStream {
+pub fn napi_strum(_attr: TokenStream, input: TokenStream) -> TokenStream {
     if let Ok(item) = parse::<ItemEnum>(input) {
-        str_enum::str_enum_expand(item).unwrap_or_else(|err| err.to_compile_error().into())
+        napi_strum::expand(item).unwrap_or_else(|err| err.to_compile_error().into())
     } else {
         Default::default()
     }

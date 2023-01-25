@@ -1,36 +1,10 @@
 use std::collections::HashMap;
 
-use core_macros::str_enum;
+use core_macros::napi_strum;
 use napi::{bindgen_prelude::ToNapiValue, Either};
 use napi_derive::napi;
 
-use crate::{connection::StreamParameters, crypt::CipherMode};
-
-#[macro_export]
-macro_rules! patch_options {
-    ($resource:expr, $payload:expr, $( $key:ident ),+) => {
-        {
-            $( $resource.$key = $payload.$key.or($resource.$key); )*
-        }
-    };
-}
-
-macro_rules! partial {
-    ($( #[$attr:meta] )* pub struct $name:ident {
-        $( pub $field_name:ident: $field_type:ty, )*
-    }) => {
-        $( #[$attr] )*
-        pub struct $name {
-            $(pub $field_name: Option<$field_type>,)*
-        }
-
-        impl $name {
-            pub fn merge(&mut self, other: $name) {
-                $( if other.$field_name.is_some() { self.$field_name = other.$field_name; } )*
-            }
-        }
-    }
-}
+use crate::{connection::StreamParameters, crypt::CipherMode, partial};
 
 #[napi]
 pub enum DegradationPreference {
@@ -131,7 +105,7 @@ partial! {
     }
 }
 
-#[str_enum]
+#[napi_strum]
 pub enum VideoCodecName {
     H264 = "H264",
     VP8 = "VP8",
@@ -146,7 +120,7 @@ pub struct VideoCodec {
     pub params: Option<HashMap<String, String>>,
 }
 
-#[str_enum]
+#[napi_strum]
 pub enum AudioCodecName {
     Opus = "opus",
 }
