@@ -1,19 +1,20 @@
 use std::{sync::mpsc, thread};
 
-use crate::{audio::AudioManager, crypt::*, transport::ConnectionTransportOptions};
+use crate::{crypt::*, transport::ConnectionTransportOptions};
 use napi_derive::napi;
 
 #[napi]
 pub struct VoiceConnectionHandle {
     pub user_id: String,
-    pub options: ConnectionOptions,
-    thread_join: thread::JoinHandle<()>,
-    transport_tx: mpsc::Sender<ConnectionTransportOptions>,
+    pub settings: ConnectionSettings,
+    thread_join: Option<thread::JoinHandle<()>>,
+    request_tx: crossbeam_channel::Sender<VoiceRequest>,
+    event_rx: crossbeam_channel::Receiver<VoiceEvent>,
 }
 
 #[napi(object)]
 #[derive(Clone, Default)]
-pub struct ConnectionOptions {
+pub struct ConnectionSettings {
     pub address: String,
     pub port: u16,
     pub ssrc: u32,
@@ -32,29 +33,53 @@ pub struct StreamParameters {
     pub modes: Vec<CipherMode>,
 }
 
+pub enum VoiceRequest {
+    Options(Box<ConnectionTransportOptions>),
+    Destroy,
+}
+pub enum VoiceEvent {
+    //
+}
+
 #[napi]
 impl VoiceConnectionHandle {
-    pub fn new(user_id: String, options: ConnectionOptions) -> Self {
-        let (transport_tx, transport_rx) = mpsc::channel();
+    pub fn new(user_id: String, settings: ConnectionSettings) -> Self {
+        let (event_tx, event_rx) = crossbeam_channel::unbounded();
+        let (request_tx, request_rx) = crossbeam_channel::unbounded();
 
         let user_id_2 = user_id.clone();
-        let options_2 = options.clone();
+        let settings_2 = settings.clone();
         let thread_join = thread::spawn(move || {
-            let mut connection = VoiceConnection::new(user_id_2, options_2, transport_rx);
-            connection.start();
+            let mut connection = VoiceConnection {
+                user_id: user_id_2,
+                settings: settings_2,
+                options: Default::default(),
+                request_rx,
+                event_tx,
+            };
+            connection.do_cycle();
         });
 
         Self {
             user_id,
-            options,
-            thread_join,
-            transport_tx,
+            settings,
+            thread_join: Some(thread_join),
+            event_rx,
+            request_tx,
+        }
+    }
+
+    #[napi]
+    pub fn destroy(&mut self) {
+        _ = self.request_tx.send(VoiceRequest::Destroy);
+        if let Some(thread_join) = self.thread_join.take() {
+            _ = thread_join.join();
         }
     }
 
     #[napi]
     pub fn get_ip(&self) -> napi::Result<Vec<u8>> {
-        self.options
+        self.settings
             .address
             .split('.')
             .into_iter()
@@ -68,37 +93,35 @@ impl VoiceConnectionHandle {
         &mut self,
         options: ConnectionTransportOptions,
     ) -> napi::Result<()> {
-        self.transport_tx.send(options).map_err(|_| {
-            napi::Error::from_reason("Could not send transport options as channel is closed")
-        })
+        self.request_tx
+            .send(VoiceRequest::Options(Box::new(options)))
+            .map_err(|_| {
+                napi::Error::from_reason("Could not send transport options as channel is closed")
+            })
     }
 }
 
 pub struct VoiceConnection {
     user_id: String,
-    options: ConnectionOptions,
-    transport_opts: ConnectionTransportOptions,
-    transport_rx: mpsc::Receiver<ConnectionTransportOptions>,
+    settings: ConnectionSettings,
+    options: ConnectionTransportOptions,
+    request_rx: crossbeam_channel::Receiver<VoiceRequest>,
+    event_tx: crossbeam_channel::Sender<VoiceEvent>,
 }
 
 impl VoiceConnection {
-    pub fn new(
-        user_id: String,
-        options: ConnectionOptions,
-        transport_rx: mpsc::Receiver<ConnectionTransportOptions>,
-    ) -> Self {
-        Self {
-            user_id,
-            options,
-            transport_opts: ConnectionTransportOptions::default(),
-            transport_rx,
-        }
-    }
-
-    pub fn start(&mut self) {
+    pub fn do_cycle(&mut self) {
         loop {
-            for transport_opts in self.transport_rx.try_iter() {
-                self.transport_opts.merge(transport_opts);
+            // Handle requests from napi thread
+            for request in self.request_rx.try_iter() {
+                match request {
+                    VoiceRequest::Destroy => {
+                        return;
+                    }
+                    VoiceRequest::Options(options) => {
+                        self.options.merge(*options);
+                    }
+                }
             }
         }
     }

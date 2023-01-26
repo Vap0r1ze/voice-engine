@@ -2,7 +2,7 @@
 
 use audio::{AudioDeviceType, AudioManager};
 use callbacks::{CallbackRef, CoreCallbackStore};
-use connection::{ConnectionOptions, VoiceConnectionHandle};
+use connection::{ConnectionSettings, VoiceConnectionHandle};
 use cpal::traits::DeviceTrait;
 use napi::{sys::PropertyAttributes::default, Env, JsFunction, JsNumber, JsObject};
 use napi_derive::napi;
@@ -65,9 +65,9 @@ impl VoiceCore {
     pub fn create_voice_connection(
         &mut self,
         user_id: String,
-        options: ConnectionOptions,
+        settings: ConnectionSettings,
     ) -> VoiceConnectionHandle {
-        VoiceConnectionHandle::new(user_id, options)
+        VoiceConnectionHandle::new(user_id, settings)
     }
 
     #[napi]

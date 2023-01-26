@@ -7,8 +7,8 @@ static OPUS_SAMPLE_RATES: [u32; 5] = [48000, 24000, 16000, 12000, 8000];
 
 pub struct AudioManager {
     host: cpal::Host,
-    frame_rx: mpsc::Receiver<AudioFrame>,
-    frame_tx: mpsc::Sender<AudioFrame>,
+    frame_rx: crossbeam_channel::Receiver<AudioFrame>,
+    frame_tx: crossbeam_channel::Sender<AudioFrame>,
     stream: Option<cpal::Stream>,
 }
 pub struct FrameRequest {
@@ -31,7 +31,7 @@ pub struct StreamRequest {
 
 impl AudioManager {
     pub fn new() -> Self {
-        let (frame_tx, frame_rx) = mpsc::channel();
+        let (frame_tx, frame_rx) = crossbeam_channel::unbounded();
         Self {
             host: cpal::default_host(),
             frame_tx,
@@ -94,17 +94,14 @@ impl AudioManager {
             cpal::SampleFormat::F32 => build_input_stream! {f32},
         }
         .expect("Failed to build input stream");
-        stream.play().expect("Failed to play stream");
-
-        std::thread::sleep(std::time::Duration::from_secs(1));
-        drop(stream);
+        self.stream = Some(stream);
     }
 }
 
 fn send_input_frame<T: cpal::Sample>(
     pcm: &[T],
     frame_req: &FrameRequest,
-    tx: &mpsc::Sender<AudioFrame>,
+    tx: &crossbeam_channel::Sender<AudioFrame>,
 ) {
     let input = pcm.iter().map(|s| s.to_f32()).collect::<Vec<f32>>();
 

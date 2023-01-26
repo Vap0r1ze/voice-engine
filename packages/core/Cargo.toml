@@ -15,6 +15,7 @@ cpal = "0.14.2"
 rtp = "0.6.8"
 opus = "0.3.0"
 samplerate = "0.2.4"
+crossbeam-channel = "0.5.6"
 
 [dependencies.core-macros]
 path = "../core-macros"
